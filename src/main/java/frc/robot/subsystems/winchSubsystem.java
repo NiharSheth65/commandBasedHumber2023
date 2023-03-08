@@ -16,12 +16,12 @@ public class winchSubsystem extends SubsystemBase {
 
   private DigitalInput limitSwitchBack = new DigitalInput(0);
   private DigitalInput limitSwitchFront = new DigitalInput(1);
-  
+
   boolean limitStateBack;
   boolean limitStateFront;
 
   public winchSubsystem() {
- 
+
   }
 
   @Override
@@ -29,32 +29,24 @@ public class winchSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     limitStateBack = limitSwitchBack.get();
     limitStateFront = limitSwitchFront.get();
-    
-    SmartDashboard.putBoolean("limit state back", limitStateBack); 
-    SmartDashboard.putBoolean("limit state front", limitStateFront); 
-  
-  
+
+    SmartDashboard.putBoolean("limit state back", limitStateBack);
+    SmartDashboard.putBoolean("limit state front", limitStateFront);
   }
 
-  public void runWinch(double speed){
-    double winchRunSpeed; 
-
-    if(limitStateFront == false && limitStateFront == true){
-      winchRunSpeed = speed; 
-    }
-
-    else if(limitStateBack == false && goOut == false){
-      winchRunSpeed = speed; 
-    }
-
-    else{
-      winchRunSpeed = 0; 
-    }
-
-    winchMotor.set(winchRunSpeed); 
+  public boolean frontLimitSwitch() {
+    return limitStateFront;
   }
 
-  public void stopWinch(){
+  public boolean backLimitSwitch() {
+    return limitStateBack;
+  }
+
+  public void runWinch(double speed) {
+    winchMotor.set(speed);
+  }
+
+  public void stopWinch() {
     winchMotor.set(0);
   }
 

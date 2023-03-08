@@ -18,6 +18,7 @@ public class drivetrainSubsytem extends SubsystemBase {
   private CANSparkMax rightMotorFront;
   private CANSparkMax rightMotorBack;
 
+
   /** Creates a new drivetrainSubsytem. */
   public drivetrainSubsytem() {
     leftMotorFront = new CANSparkMax(2, MotorType.kBrushless);

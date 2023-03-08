@@ -8,11 +8,14 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.defaultDriveCommand;
+import frc.robot.commands.gearshiftingCommand;
 import frc.robot.commands.intakeCommand;
-import frc.robot.commands.outtakeCommand;
+import frc.robot.commands.intakeWinchCommand;
+import frc.robot.commands.outtakeWinchCommand;
 import frc.robot.commands.winchCommand;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.drivetrainSubsytem;
+import frc.robot.subsystems.gearboxSubsystem;
 import frc.robot.subsystems.intakeSubsystem;
 import frc.robot.subsystems.winchSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
@@ -33,6 +36,7 @@ public class RobotContainer {
   private final drivetrainSubsytem DRIVE_SUBSYSTEM = new drivetrainSubsytem(); 
   private final intakeSubsystem INTAKE_SUBSYSTEM = new intakeSubsystem();
   private final winchSubsystem WINCH_SUBSYSTEM = new winchSubsystem(); 
+  private final gearboxSubsystem GEARBOX_SUBSYSTEM = new gearboxSubsystem(); 
 
   private final Joystick joystick = new Joystick(0); 
 
@@ -59,16 +63,6 @@ public class RobotContainer {
     defaultCommands();
   }
 
-  private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-  }
-
   private void configureButtonBindings(){
     // BUTTON_RB.onTrue(new outtakeCommand(INTAKE_SUBSYSTEM)); 
     BUTTON_RB.onTrue(new intakeCommand(INTAKE_SUBSYSTEM, 0.5));
@@ -77,10 +71,19 @@ public class RobotContainer {
     BUTTON_LB.onTrue(new intakeCommand(INTAKE_SUBSYSTEM, -0.5)); 
     BUTTON_LB.onFalse(new intakeCommand(INTAKE_SUBSYSTEM, 0));  
   
-    BUTTON_A.onTrue(new winchCommand(WINCH_SUBSYSTEM, 0.5)); 
+    // BUTTON_A.onTrue(new winchCommand(WINCH_SUBSYSTEM, 0.5, 1)); 
+    // BUTTON_B.onTrue(new winchCommand(WINCH_SUBSYSTEM, -0.5, 2)); 
 
-    BUTTON_B.onTrue(new winchCommand(WINCH_SUBSYSTEM, -0.5)); 
-  
+    BUTTON_RIGHT_JOYSTICK.onTrue(new gearshiftingCommand(GEARBOX_SUBSYSTEM, 1)); 
+    BUTTON_LEFT_JOYSTICK.onTrue(new gearshiftingCommand(GEARBOX_SUBSYSTEM, 2)); 
+
+    if(joystick.getRawAxis(2) > 0.5){
+      new outtakeWinchCommand(WINCH_SUBSYSTEM, 0.5); 
+    }
+
+    else if(joystick.getRawAxis(3) > 0.5){
+      new intakeWinchCommand(WINCH_SUBSYSTEM, -0.5); 
+    }
   }
 
   private void defaultCommands(){
