@@ -12,11 +12,13 @@ public class winchCommand extends CommandBase {
   
   private winchSubsystem WINCH_SUBSYSTEM; 
   double winchSpeed; 
+  int winchMode; 
 
-  public winchCommand(winchSubsystem winch, double speed) {
+  public winchCommand(winchSubsystem winch, double speed, int mode) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.WINCH_SUBSYSTEM = winch; 
     this.winchSpeed = speed; 
+    this.winchMode = mode; 
 
     addRequirements(WINCH_SUBSYSTEM);
   }
@@ -28,7 +30,7 @@ public class winchCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    WINCH_SUBSYSTEM.runWinch(winchSpeed);
+    WINCH_SUBSYSTEM.runWinch(winchSpeed, winchMode);
     System.out.println("winch should be running"); 
   }
 
@@ -44,3 +46,6 @@ public class winchCommand extends CommandBase {
     return false;
   }
 }
+
+// shift sensors to this file
+// once the sensors become true, change is finsihed into true 

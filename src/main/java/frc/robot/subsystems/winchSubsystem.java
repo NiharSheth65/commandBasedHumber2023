@@ -36,22 +36,41 @@ public class winchSubsystem extends SubsystemBase {
   
   }
 
-  public void runWinch(double speed){
-    double winchRunSpeed; 
+  public void runWinch(double speed, int mode){
+    double winchMotorSpeed; 
 
-    if(limitStateFront == false && limitStateFront == true){
-      winchRunSpeed = speed; 
+    if (mode == 0) {
+      winchMotorSpeed = 0;
     }
 
-    else if(limitStateBack == false && goOut == false){
-      winchRunSpeed = speed; 
+    else if (mode == 1) {
+      if (limitStateFront == true) {
+        winchMotorSpeed = 0;
+        mode = 0;
+      }
+
+      else {
+        winchMotorSpeed = -0.5;
+      }
     }
 
-    else{
-      winchRunSpeed = 0; 
+    // button lb is asking to go backward, give backward speed
+    else if (mode == 2) {
+      if (limitStateBack == true) {
+        winchMotorSpeed = 0;
+        mode = 0;
+      }
+
+      else {
+        winchMotorSpeed = 0.5;
+      }
     }
 
-    winchMotor.set(winchRunSpeed); 
+    else {
+      winchMotorSpeed = 0;
+    }
+
+    winchMotor.set(winchMotorSpeed);
   }
 
   public void stopWinch(){
