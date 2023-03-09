@@ -7,13 +7,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.intakeSubsystem;
 
-public class intakeCommand extends CommandBase {
+public class defaultUpperIntakeCommand extends CommandBase {
 
   private intakeSubsystem INTAKE_SUBSYSTEM; 
   double intakeSpeed;
-  
-  /** Creates a new intakeCommand. */
-  public intakeCommand(intakeSubsystem intake, double speed) {
+
+  /** Creates a new defaultUpperIntakeCommand. */
+  public defaultUpperIntakeCommand(intakeSubsystem intake, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.INTAKE_SUBSYSTEM = intake; 
     this.intakeSpeed = speed; 
@@ -22,16 +22,12 @@ public class intakeCommand extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    // intakeSpeed = 0; 
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     INTAKE_SUBSYSTEM.intake(intakeSpeed);
-    System.out.println("Should be running");
-
   }
 
   // Called once the command ends or is interrupted.
