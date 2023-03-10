@@ -17,6 +17,7 @@ public class defaultDriveCommand extends CommandBase {
 
   double drive; 
   double turn;
+  double safetyFactor; 
 
   SlewRateLimiter drive_Limiter = new SlewRateLimiter(1); 
   SlewRateLimiter turn_Limiter = new SlewRateLimiter(1); 
@@ -25,7 +26,6 @@ public class defaultDriveCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.DRIVE_SUBSYSTEM = drive; 
     this.joy = joystick; 
-
     addRequirements(DRIVE_SUBSYSTEM);
   }
 
@@ -39,9 +39,26 @@ public class defaultDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drive = drive_Limiter.calculate(joy.getRawAxis(1));  
-    turn = turn_Limiter.calculate(joy.getRawAxis(4)); 
+
+    // drive 
+    if(Math.abs(joy.getRawAxis(1)) < 0.1){
+      drive = 0; 
+    }
+    else{
+      drive = joy.getRawAxis(1);  
+    }
+
+    // turn 
+    if(Math.abs(joy.getRawAxis(4)) < 0.1){
+      turn = 0; 
+    }
+    else{
+      // turn = turn_Limiter.calculate(joy.getRawAxis(4)); 
+      turn = joy.getRawAxis(4); 
+    }
     
+    drive *= 0.5; 
+    turn *= 0.3; 
     DRIVE_SUBSYSTEM.set(drive, turn);
   }
 
