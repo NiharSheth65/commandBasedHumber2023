@@ -5,48 +5,45 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.intakeSubsystem;
+import frc.robot.subsystems.winchSubsystem;
 
-public class intakeCommand extends CommandBase {
+public class intakeWinchCommand extends CommandBase {
+  /** Creates a new intakeWinchCommand. */
 
-  private intakeSubsystem INTAKE_SUBSYSTEM; 
-  double intakeSpeed;
-  
-  /** Creates a new intakeCommand. */
-  public intakeCommand(intakeSubsystem intake, double speed) {
+  winchSubsystem WINCH_SUBSYSTEM; 
+  double winchSpeed; 
+
+  public intakeWinchCommand(winchSubsystem winch, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.INTAKE_SUBSYSTEM = intake; 
-    this.intakeSpeed = speed; 
-    addRequirements(INTAKE_SUBSYSTEM);
+    this.WINCH_SUBSYSTEM = winch; 
+    this.winchSpeed = speed; 
+    addRequirements(WINCH_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    // intakeSpeed = 0; 
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    INTAKE_SUBSYSTEM.intake(intakeSpeed);
-    System.out.println("Should be running");
-
+    WINCH_SUBSYSTEM.runWinchIn(winchSpeed);;
   }
 
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    INTAKE_SUBSYSTEM.stop();
+    WINCH_SUBSYSTEM.stopWinch(); 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(INTAKE_SUBSYSTEM.intakeLimitSwitch() == false){
+    if(WINCH_SUBSYSTEM.backLimitSwitch()){
       return true; 
     }else{
       return false;
-    }
+    } 
   }
 }
