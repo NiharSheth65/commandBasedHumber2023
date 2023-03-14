@@ -5,48 +5,47 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.intakeSubsystem;
+import frc.robot.subsystems.drivetrainSubsytem;
 
-public class intakeCommand extends CommandBase {
-
-  private intakeSubsystem INTAKE_SUBSYSTEM; 
-  double intakeSpeed;
+public class autoDockingCommand extends CommandBase {
   
-  /** Creates a new intakeCommand. */
-  public intakeCommand(intakeSubsystem intake, double speed) {
+  private drivetrainSubsytem DRIVE_SUBSYSTEM; 
+  double pitch; 
+  double pitchTarget; 
+
+  /** Creates a new autoDockingCommand. */
+  public autoDockingCommand(drivetrainSubsytem drive) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.INTAKE_SUBSYSTEM = intake; 
-    this.intakeSpeed = speed; 
-    addRequirements(INTAKE_SUBSYSTEM);
+    this.DRIVE_SUBSYSTEM = drive; 
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // intakeSpeed = 0; 
+    pitchTarget = DRIVE_SUBSYSTEM.gyroRoll(); 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    INTAKE_SUBSYSTEM.intake(intakeSpeed);
-    System.out.println("Should be running");
-
+    pitch = DRIVE_SUBSYSTEM.gyroRoll(); 
+    double outputSpeed; 
+    
+    if(Math.abs(pitchTarget - pitch) > 8){
+      
+    }
   }
+
+
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    INTAKE_SUBSYSTEM.stop();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(INTAKE_SUBSYSTEM.intakeLimitSwitch() == false){
-      return true; 
-    }else{
-      return false;
-    }
+    return false;
   }
 }
