@@ -4,56 +4,55 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.intakeSubsystem;
+import frc.robot.subsystems.upperJawSubsystem;
 
-public class outtakeCommand extends CommandBase {
+public class upperJawCommand extends CommandBase {
   
-  private intakeSubsystem INTAKE_SUBSYSTEM; 
-  double outtakeSpeed; 
+  private upperJawSubsystem UPPERJAW_SUBSYSTEM; 
+  double staticSpeed; 
+  double runSpeed; 
   double startTime; 
 
-  /** Creates a new outtakeCommand. */
-  public outtakeCommand(intakeSubsystem intake) {
+  /** Creates a new upperIntakeCommand. */
+  public upperJawCommand(upperJawSubsystem jaw, double setpoint, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.INTAKE_SUBSYSTEM = intake; 
-    addRequirements(INTAKE_SUBSYSTEM);
+    this.UPPERJAW_SUBSYSTEM = jaw; 
+    this.staticSpeed = speed; 
+    addRequirements(UPPERJAW_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    outtakeSpeed = 0; 
     startTime = System.currentTimeMillis(); 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    outtakeSpeed = -0.5; 
-    INTAKE_SUBSYSTEM.outtake(outtakeSpeed);
+
+    if(System.currentTimeMillis() > startTime + 3000){
+      runSpeed = staticSpeed; 
+    }
+
+    else{
+      runSpeed = 0; 
+    }
+
+    UPPERJAW_SUBSYSTEM.setUpperJaw(staticSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    INTAKE_SUBSYSTEM.stop();
+    UPPERJAW_SUBSYSTEM.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(INTAKE_SUBSYSTEM.intakeLimitSwitch() == true){
-      // if current time - start time == 100
-      if(System.currentTimeMillis() > startTime + 250){
-        return true; 
-      }
-
-      else {return false;} 
-      
-    }
-    else{
-      return false;
-    } 
+    return false;
   }
 }

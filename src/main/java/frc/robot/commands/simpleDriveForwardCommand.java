@@ -5,55 +5,47 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.intakeSubsystem;
+import frc.robot.subsystems.drivetrainSubsytem;
 
-public class outtakeCommand extends CommandBase {
-  
-  private intakeSubsystem INTAKE_SUBSYSTEM; 
-  double outtakeSpeed; 
-  double startTime; 
+public class simpleDriveForwardCommand extends CommandBase {
+  /** Creates a new simpleDriveForwardCommand. */
+  private drivetrainSubsytem DRIVE_SUBSYSTEM; 
+  private double target; 
+  double averageDistance; 
 
-  /** Creates a new outtakeCommand. */
-  public outtakeCommand(intakeSubsystem intake) {
+  public simpleDriveForwardCommand(drivetrainSubsytem drive, double encoderPosition) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.INTAKE_SUBSYSTEM = intake; 
-    addRequirements(INTAKE_SUBSYSTEM);
+    this.DRIVE_SUBSYSTEM = drive; 
+    this.target = encoderPosition;   
+    addRequirements(DRIVE_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    outtakeSpeed = 0; 
-    startTime = System.currentTimeMillis(); 
+    averageDistance = 0; 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    outtakeSpeed = -0.5; 
-    INTAKE_SUBSYSTEM.outtake(outtakeSpeed);
+    DRIVE_SUBSYSTEM.set(0.2, 0);
+    averageDistance = (DRIVE_SUBSYSTEM.rightEncoder() + DRIVE_SUBSYSTEM.leftEncoder())/2; 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    INTAKE_SUBSYSTEM.stop();
+    DRIVE_SUBSYSTEM.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(INTAKE_SUBSYSTEM.intakeLimitSwitch() == true){
-      // if current time - start time == 100
-      if(System.currentTimeMillis() > startTime + 250){
-        return true; 
-      }
-
-      else {return false;} 
-      
-    }
-    else{
+    if(Math.abs(averageDistance) >= Math.abs(target)){
+      return true; 
+    }else{
       return false;
-    } 
+    }
   }
 }
