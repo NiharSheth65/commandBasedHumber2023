@@ -5,53 +5,48 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.intakeSubsystem;
+import frc.robot.subsystems.drivetrainSubsytem;
 
-public class outtakeCommand extends CommandBase {
-  
-  private intakeSubsystem INTAKE_SUBSYSTEM; 
-  double outtakeSpeed; 
-  double startTime; 
+public class turnCommand extends CommandBase {
+  /** Creates a new turnCommand. */
 
-  /** Creates a new outtakeCommand. */
-  public outtakeCommand(intakeSubsystem intake) {
+  private drivetrainSubsytem DRIVE_SUBSYSTEM; 
+  private double turnAngle; 
+
+  public turnCommand(drivetrainSubsytem drive, double turn) {
+    this.DRIVE_SUBSYSTEM = drive; 
+    this.turnAngle = turn; 
+    addRequirements(DRIVE_SUBSYSTEM);
     // Use addRequirements() here to declare subsystem dependencies.
-    this.INTAKE_SUBSYSTEM = intake; 
-    addRequirements(INTAKE_SUBSYSTEM);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    outtakeSpeed = 0; 
-    startTime = System.currentTimeMillis(); 
+    DRIVE_SUBSYSTEM.resetEncoders();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    outtakeSpeed = -0.5; 
-    INTAKE_SUBSYSTEM.outtake(outtakeSpeed);
+    DRIVE_SUBSYSTEM.setRight(0.5);
+    DRIVE_SUBSYSTEM.setLeft(-0.5);  
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    INTAKE_SUBSYSTEM.stop();
+    DRIVE_SUBSYSTEM.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(INTAKE_SUBSYSTEM.intakeLimitSwitch() == true){
-      // if current time - start time == 100
-      if(System.currentTimeMillis() > startTime + 250){
-        return true; 
-      }
 
-      else {return false;} 
-      
+    if(Math.abs(DRIVE_SUBSYSTEM.rightEncoder()) < 0.1){
+      return true; 
     }
+
     else{
       return false;
     } 

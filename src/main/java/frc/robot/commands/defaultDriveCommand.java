@@ -6,7 +6,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.drivetrainSubsytem;
 
 public class defaultDriveCommand extends CommandBase {
@@ -17,15 +19,18 @@ public class defaultDriveCommand extends CommandBase {
 
   double drive; 
   double turn;
+  double driveFactor;
+  double turnFactor;  
 
   SlewRateLimiter drive_Limiter = new SlewRateLimiter(1); 
   SlewRateLimiter turn_Limiter = new SlewRateLimiter(1); 
 
-  public defaultDriveCommand(drivetrainSubsytem drive, Joystick joystick) {
+  public defaultDriveCommand(drivetrainSubsytem drive, Joystick joystick, double speedSafety, double turnSafety) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.DRIVE_SUBSYSTEM = drive; 
     this.joy = joystick; 
-
+    this.driveFactor = speedSafety; 
+    this.turnFactor = turnSafety; 
     addRequirements(DRIVE_SUBSYSTEM);
   }
 
@@ -39,9 +44,29 @@ public class defaultDriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drive = drive_Limiter.calculate(joy.getRawAxis(1));  
-    turn = turn_Limiter.calculate(joy.getRawAxis(4)); 
     
+    // drive 
+    if(Math.abs(joy.getRawAxis(1)) < 0.1){
+      drive = 0; 
+    }
+    else{
+      drive = joy.getRawAxis(1);  
+    }
+
+    // turn 
+    if(Math.abs(joy.getRawAxis(4)) < 0.1){
+      turn = 0; 
+    }
+    else{
+      // turn = turn_Limiter.calculate(joy.getRawAxis(4)); 
+      turn = joy.getRawAxis(4); 
+    }
+    
+    SmartDashboard.putNumber("left joystick", drive);
+    SmartDashboard.putNumber("right joystick", turn); 
+
+    drive *= driveFactor; 
+    turn *= turnFactor; 
     DRIVE_SUBSYSTEM.set(drive, turn);
   }
 
